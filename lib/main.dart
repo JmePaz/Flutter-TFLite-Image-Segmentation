@@ -56,8 +56,8 @@ class _TfliteHomeState extends State<TfliteHome> {
       String res;
       if (_model == dlv3) {
         res = await Tflite.loadModel(
-          model: 'assets/tflite/deeplabv3_257_mv_gpu.tflite',
-          labels: 'assets/tflite/deeplabv3_257_mv_gpu.txt',
+          model: 'assets/tflite/lite-model_deeplabv3_1_metadata_2.tflite',
+          labels: 'assets/tflite/labelmap.txt',
         );
       }
     } on PlatformException {
@@ -113,8 +113,8 @@ class _TfliteHomeState extends State<TfliteHome> {
   dlv(File image) async {
     var recognitions = await Tflite.runSegmentationOnImage(
       path: image.path,
-      imageMean: 0.0,
-      imageStd: 255.0,
+      imageMean: 127.5,
+      imageStd: 127.5,
       outputType: "png",
       asynch: true,
     );

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tflite/tflite.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:image/image.dart' as img;
 
 void main() => runApp(MyApp());
 
@@ -90,9 +91,6 @@ class _TfliteHomeState extends State<TfliteHome> {
   // method responsible for predicting segmentation for the selected image
   predictImage(File image) async {
     if (image == null) return;
-    if (_model == dlv3) {
-      await dlv(image);
-    }
     // get the width and height of selected image
     FileImage(image)
         .resolve(ImageConfiguration())
@@ -101,26 +99,53 @@ class _TfliteHomeState extends State<TfliteHome> {
             _imageWidth = info.image.width.toDouble();
             _imageHeight = info.image.height.toDouble();
           });
+          dlv(image);
         })));
-
-    setState(() {
-      _image = image;
-      _busy = false;
-    });
   }
 
   // method responsible for giving actual prediction from the model
   dlv(File image) async {
     var recognitions = await Tflite.runSegmentationOnImage(
       path: image.path,
+      labelColors: [
+        Color.fromARGB(0, 0, 0, 0).value,
+        Color.fromARGB(255, 255, 255, 255).value,
+      ],
       imageMean: 127.5,
       imageStd: 127.5,
       outputType: "png",
       asynch: true,
     );
 
+    //cropping
+    // img.Image actual = await img.decodeJpgFile(image.path);
+    // img.Image region = img.decodePng(recognitions);
+
+    // for (int y = 0; y < _imageHeight / 2; y++) {
+    //   for (int x = 0; x < _imageWidth / 2; x++) {
+    //     img.Pixel regionP = region.getPixel(x, y);
+    //     regionP.setRgba(0, 0, 0, 0);
+    //     // if (!(regionP.r == 0 && regionP.g == 0 && regionP.b == 0)) {
+    //     //   //actual.setPixelRgb(x, y, 255, 255, 255);
+    //     //img.Pixel acutalP = actual.getPixel(x, y);
+    //     //acutalP..setRgba(0, 0, 0, 0);
+    //     //   regionP..r = acutalP.r;
+    //     //   regionP..g = acutalP.g;
+    //     //   regionP..b = acutalP.b;
+    //     //   regionP..a = 255;
+    //     // } else {
+    //     //   regionP..a = 0;
+    //     // }
+
+    //   }
+    // }
+
+    // var res = img.encodePng(region);
+    //
     setState(() {
       _recognitions = recognitions;
+      _image = image;
+      _busy = false;
     });
   }
 
@@ -174,10 +199,7 @@ class _TfliteHomeState extends State<TfliteHome> {
           ? Center(
               child: Text('Please Select an Image From Camera or Gallery'),
             )
-          : Image.file(
-              _image,
-              fit: BoxFit.fill,
-            ),
+          : Container(),
     ));
 
     // widget to show segmentation preview, when segmentation not available default blank text is shown
@@ -228,9 +250,14 @@ class _TfliteHomeState extends State<TfliteHome> {
           )
         ],
       ),
-      body: Stack(
-        children: stackChildren,
-      ),
+      body: _recognitions == null
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Container(
+              width: double.infinity,
+              height: 400,
+              child: Image.memory(_recognitions, fit: BoxFit.fill)),
     );
   }
 }

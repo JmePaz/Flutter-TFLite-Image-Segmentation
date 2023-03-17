@@ -254,10 +254,7 @@ class _TfliteHomeState extends State<TfliteHome> {
           ? Center(
               child: CircularProgressIndicator(),
             )
-          : Container(
-              width: double.infinity,
-              height: 400,
-              child: Image.memory(_recognitions, fit: BoxFit.fill)),
+          : Container(child: Image.memory(_recognitions, fit: BoxFit.fitWidth)),
     );
   }
 }

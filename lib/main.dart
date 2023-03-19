@@ -117,31 +117,6 @@ class _TfliteHomeState extends State<TfliteHome> {
       asynch: true,
     );
 
-    //cropping
-    // img.Image actual = await img.decodeJpgFile(image.path);
-    // img.Image region = img.decodePng(recognitions);
-
-    // for (int y = 0; y < _imageHeight / 2; y++) {
-    //   for (int x = 0; x < _imageWidth / 2; x++) {
-    //     img.Pixel regionP = region.getPixel(x, y);
-    //     regionP.setRgba(0, 0, 0, 0);
-    //     // if (!(regionP.r == 0 && regionP.g == 0 && regionP.b == 0)) {
-    //     //   //actual.setPixelRgb(x, y, 255, 255, 255);
-    //     //img.Pixel acutalP = actual.getPixel(x, y);
-    //     //acutalP..setRgba(0, 0, 0, 0);
-    //     //   regionP..r = acutalP.r;
-    //     //   regionP..g = acutalP.g;
-    //     //   regionP..b = acutalP.b;
-    //     //   regionP..a = 255;
-    //     // } else {
-    //     //   regionP..a = 0;
-    //     // }
-
-    //   }
-    // }
-
-    // var res = img.encodePng(region);
-    //
     setState(() {
       _recognitions = recognitions;
       _image = image;
